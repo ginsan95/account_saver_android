@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Account Saver</string>
 
+    <!--Navigation Drawer-->
+    <string name="nav_account">Account</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_drawer_open">Open navigation drawer</string>
+    <string name="nav_drawer_close">Open navigation drawer</string>
+
     <!--Login-->
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>

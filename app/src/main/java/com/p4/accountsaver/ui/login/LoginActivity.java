@@ -5,9 +5,8 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
-import com.p4.accountsaver.MainActivity;
+import com.p4.accountsaver.ui.MainActivity;
 import com.p4.accountsaver.R;
 import com.p4.accountsaver.databinding.ActivityLoginBinding;
 import com.p4.accountsaver.repository.ApiEvent;
