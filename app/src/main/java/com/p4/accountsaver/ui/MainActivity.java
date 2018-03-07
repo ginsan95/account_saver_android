@@ -10,6 +10,9 @@ import android.view.MenuItem;
 
 import com.p4.accountsaver.R;
 import com.p4.accountsaver.databinding.ActivityMainBinding;
+import com.p4.accountsaver.ui.account.AccountFragment;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private ActivityMainBinding mBinding;
@@ -29,11 +32,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 this, mBinding.drawerLayout, R.string.nav_drawer_open, R.string.nav_drawer_close);
         mBinding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        onNavigationItemSelected(mBinding.navView.getMenu().findItem(R.id.nav_account));
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        item.setChecked(true);
+        if (!item.isChecked()) {
+            item.setChecked(true);
+            switch (item.getItemId()) {
+                case R.id.nav_account:
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(mBinding.containerLayout.getId(), new AccountFragment())
+                            .commit();
+                    break;
+                case R.id.nav_profile:
+                    break;
+            }
+        }
+
         mBinding.drawerLayout.closeDrawers();
         return true;
     }

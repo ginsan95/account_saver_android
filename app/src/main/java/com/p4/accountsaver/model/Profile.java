@@ -1,12 +1,16 @@
 package com.p4.accountsaver.model;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by averychoke on 27/2/18.
  */
 
 public class Profile {
-    private String mName;
-    private String mOwnerId;
+    private String name;
+    private String ownerId;
+    @SerializedName("user-token")
+    private String userToken;
 
     // For Gson
     public Profile() {
@@ -14,18 +18,22 @@ public class Profile {
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public void setName(String name) {
-        mName = name;
+        this.name = name;
     }
 
     public String getOwnerId() {
-        return mOwnerId;
+        return ownerId;
     }
 
     public void setOwnerId(String ownerId) {
-        mOwnerId = ownerId;
+        this.ownerId = ownerId;
+    }
+
+    public String getUserToken() {
+        return userToken;
     }
 }
