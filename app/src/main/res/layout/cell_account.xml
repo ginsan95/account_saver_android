@@ -19,12 +19,13 @@
         android:background="?selectableItemBackground"
         android:onClick="@{() -> listener.onAccountSelected(account)}">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/logo_image_view"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="8dp"
             android:src="@color/colorPrimary"
+            app:imageUrl="@{account.gameIconUrl}"
             app:layout_constraintLeft_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>

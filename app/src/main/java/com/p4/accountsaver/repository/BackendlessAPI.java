@@ -32,6 +32,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class BackendlessAPI {
     private static final BackendlessAPI sInstance = new BackendlessAPI();
     private final String BASE_URL = "https://api.backendless.com/FDB083B0-BAF9-5AA7-FF6B-507294178300/AD715598-37F8-FC4D-FFC8-56D94399D600/";
+    public static final int PAGE_SIZE = 10;
+
     private Retrofit mRetrofit;
     private API mApi;
 
@@ -83,7 +85,7 @@ public class BackendlessAPI {
         });
     }
 
-    public void fetchAccounts(API.ApiListener<List<Account>> listener) {
+    public void fetchAccounts(int offset, API.ApiListener<List<Account>> listener) {
         StringBuilder sb = new StringBuilder();
         if (ProfileManager.getInstance().getProfile() != null) {
             sb.append("ownerId=" + ProfileManager.getInstance().getProfile().getOwnerId());
@@ -95,7 +97,7 @@ public class BackendlessAPI {
             e.printStackTrace();
         }
 
-        mApi.fetchAccounts(whereQuery, 0, 100).enqueue(new Callback<List<Account>>() {
+        mApi.fetchAccounts(whereQuery, offset, PAGE_SIZE).enqueue(new Callback<List<Account>>() {
             @Override
             public void onResponse(Call<List<Account>> call, Response<List<Account>> response) {
                 if (response.isSuccessful() && response.body() != null) {

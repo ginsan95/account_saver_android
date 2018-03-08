@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,11 +44,8 @@ public class AccountFragment extends BaseFragment {
         AccountViewModel viewModel = ViewModelProviders.of(this).get(AccountViewModel.class);
         mBinding.setViewmodel(viewModel);
 
-        // recycler view
         mAdapter = new AccountAdapter(viewModel);
-        mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mBinding.recyclerView.setNestedScrollingEnabled(false);
-        mBinding.recyclerView.setAdapter(mAdapter);
+        initRecyclerView(viewModel);
 
         viewModel.getViewDetailsEvent().observe(this, (Account account) -> {
             Log.d(AccountFragment.class.getSimpleName(), "view details " + account);
@@ -56,5 +54,31 @@ public class AccountFragment extends BaseFragment {
             Log.d(AccountFragment.class.getSimpleName(), "open lock");
         });
         viewModel.start();
+    }
+
+    private void initRecyclerView(AccountViewModel viewModel) {
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mBinding.recyclerView.setLayoutManager(layoutManager);
+        mBinding.recyclerView.setNestedScrollingEnabled(false);
+        mBinding.recyclerView.setAdapter(mAdapter);
+        mBinding.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0) {
+                    viewModel.fetchNextPage();
+                }
+            }
+        });
     }
 }

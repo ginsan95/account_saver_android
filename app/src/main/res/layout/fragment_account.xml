@@ -3,21 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="viewmodel"
             type="com.p4.accountsaver.ui.account.AccountViewModel" />
     </data>
 
-    <FrameLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/paginating_layout"
             app:onRefreshListener="@{viewmodel::onRefresh}"
-            app:refreshing="@{viewmodel.isFetching}" >
+            app:refreshing="@{viewmodel.isRefreshing}" >
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
@@ -29,12 +32,31 @@
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <android.support.design.widget.FloatingActionButton
+            android:id="@+id/add_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             app:srcCompat="@drawable/ic_add"
             app:fabSize="auto"
-            app:useCompatPadding="true" />
+            app:useCompatPadding="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
 
-    </FrameLayout>
+        <FrameLayout
+            android:id="@+id/paginating_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{viewmodel.isPaginating ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+        </FrameLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
+
 </layout>

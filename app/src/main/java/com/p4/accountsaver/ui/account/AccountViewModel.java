@@ -2,7 +2,6 @@ package com.p4.accountsaver.ui.account;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
@@ -25,36 +24,63 @@ import java.util.List;
 public class AccountViewModel extends AndroidViewModel implements AccountAdapter.AccountCell.AccountListener {
     private final String TAG = AccountViewModel.class.getSimpleName();
     public final ObservableList<Account> accounts = new ObservableArrayList<>();
-    public final ObservableBoolean isFetching = new ObservableBoolean();
+    public final ObservableBoolean isRefreshing = new ObservableBoolean();
+    public final ObservableBoolean isPaginating = new ObservableBoolean();
 
     private final MutableLiveData<Account> mViewDetailsEvent = new MutableLiveData<>();
     private final MutableLiveData<Account> mLockConfirmationEvent = new MutableLiveData<>();
+
+    private boolean mIsFetching = false;
 
     public AccountViewModel(@NonNull Application application) {
         super(application);
     }
 
     public void start() {
-        fetchAccounts();
+        onRefresh();
     }
 
     public void onRefresh() {
-        fetchAccounts();
+        mIsFetching = false;
+        fetchAccounts(0);
     }
 
-    private void fetchAccounts() {
-        isFetching.set(true);
-        BackendlessAPI.getInstance().fetchAccounts(new API.ApiListener<List<Account>>() {
+    public void fetchNextPage() {
+        if (!mIsFetching) {
+            fetchAccounts(accounts.size());
+        }
+    }
+
+    private void fetchAccounts(int offset) {
+        mIsFetching = true;
+        if (offset == 0) {
+            isRefreshing.set(true);
+        } else {
+            isPaginating.set(true);
+        }
+
+        BackendlessAPI.getInstance().fetchAccounts(offset, new API.ApiListener<List<Account>>() {
             @Override
             public void onSuccess(List<Account> apiAccounts) {
-                isFetching.set(false);
-                accounts.clear();
-                accounts.addAll(apiAccounts);
+                if (offset == 0) {
+                    accounts.clear();
+                    accounts.addAll(apiAccounts);
+                    mIsFetching = false;
+                } else if (apiAccounts.size() < BackendlessAPI.PAGE_SIZE || apiAccounts.isEmpty()) { // Reached the end of page, so no need to fetch anymore
+                    mIsFetching = true;
+                } else { // Pagination
+                    accounts.addAll(apiAccounts);
+                    mIsFetching = false;
+                }
+
+                // dismiss ui
+                isRefreshing.set(false);
+                isPaginating.set(false);
             }
 
             @Override
             public void onFailure(ApiError error) {
-                isFetching.set(false);
+                mIsFetching = false;
                 Log.e(TAG, error.getMessage());
             }
         });
