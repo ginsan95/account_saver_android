@@ -7,6 +7,7 @@ import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.p4.accountsaver.model.Account;
@@ -31,6 +32,7 @@ public class AccountViewModel extends AndroidViewModel implements AccountAdapter
     private final MutableLiveData<Account> mLockConfirmationEvent = new MutableLiveData<>();
 
     private boolean mIsFetching = false;
+    private String mSearchTerm = "";
 
     public AccountViewModel(@NonNull Application application) {
         super(application);
@@ -51,6 +53,19 @@ public class AccountViewModel extends AndroidViewModel implements AccountAdapter
         }
     }
 
+    public void searchAccounts(String searchTerm) {
+        mSearchTerm = searchTerm;
+        mIsFetching = false;
+        fetchAccounts(0);
+    }
+
+    public void dismissSearch() {
+        if (!TextUtils.isEmpty(mSearchTerm)) {
+            mSearchTerm = "";
+            onRefresh();
+        }
+    }
+
     private void fetchAccounts(int offset) {
         mIsFetching = true;
         if (offset == 0) {
@@ -59,19 +74,18 @@ public class AccountViewModel extends AndroidViewModel implements AccountAdapter
             isPaginating.set(true);
         }
 
-        BackendlessAPI.getInstance().fetchAccounts(offset, new API.ApiListener<List<Account>>() {
+        BackendlessAPI.getInstance().fetchAccounts(offset, mSearchTerm, new API.ApiListener<List<Account>>() {
             @Override
             public void onSuccess(List<Account> apiAccounts) {
                 if (offset == 0) {
                     accounts.clear();
                     accounts.addAll(apiAccounts);
-                    mIsFetching = false;
-                } else if (apiAccounts.size() < BackendlessAPI.PAGE_SIZE || apiAccounts.isEmpty()) { // Reached the end of page, so no need to fetch anymore
-                    mIsFetching = true;
                 } else { // Pagination
                     accounts.addAll(apiAccounts);
-                    mIsFetching = false;
                 }
+
+                // determine if still need to fetch
+                mIsFetching = apiAccounts.size() < BackendlessAPI.PAGE_SIZE || apiAccounts.isEmpty();
 
                 // dismiss ui
                 isRefreshing.set(false);
@@ -81,6 +95,9 @@ public class AccountViewModel extends AndroidViewModel implements AccountAdapter
             @Override
             public void onFailure(ApiError error) {
                 mIsFetching = false;
+                // dismiss ui
+                isRefreshing.set(false);
+                isPaginating.set(false);
                 Log.e(TAG, error.getMessage());
             }
         });

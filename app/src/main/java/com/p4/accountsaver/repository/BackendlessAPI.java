@@ -1,6 +1,7 @@
 package com.p4.accountsaver.repository;
 
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
@@ -85,19 +86,22 @@ public class BackendlessAPI {
         });
     }
 
-    public void fetchAccounts(int offset, API.ApiListener<List<Account>> listener) {
+    public void fetchAccounts(int offset, String searchTerm, API.ApiListener<List<Account>> listener) {
         StringBuilder sb = new StringBuilder();
         if (ProfileManager.getInstance().getProfile() != null) {
-            sb.append("ownerId=" + ProfileManager.getInstance().getProfile().getOwnerId());
+            sb.append("ownerId=");
+            sb.append(ProfileManager.getInstance().getProfile().getOwnerId());
         }
-        String whereQuery = null;
-        try {
-            whereQuery = URLEncoder.encode(sb.toString(), "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        if (!TextUtils.isEmpty(searchTerm)) {
+            if (sb.length() > 0) {
+                sb.append(" AND ");
+            }
+            sb.append("game_name LIKE '%");
+            sb.append(searchTerm);
+            sb.append("%'");
         }
 
-        mApi.fetchAccounts(whereQuery, offset, PAGE_SIZE).enqueue(new Callback<List<Account>>() {
+        mApi.fetchAccounts(sb.toString(), offset, PAGE_SIZE).enqueue(new Callback<List<Account>>() {
             @Override
             public void onResponse(Call<List<Account>> call, Response<List<Account>> response) {
                 if (response.isSuccessful() && response.body() != null) {
