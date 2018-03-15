@@ -19,6 +19,20 @@
     <string name="search">Search</string>
     <string name="search_hint">Search accounts</string>
 
+    <!--Account Details-->
+    <string name="new_account_title">New Account</string>
+    <string name="updated">Updated: </string>
+    <string name="main_information">Main Information</string>
+    <string name="game_name">Game Name</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="sub_information">Sub Information</string>
+    <string name="password_2">Password 2</string>
+    <string name="email">Email</string>
+    <string name="phone">Phone</string>
+    <string name="description">Description</string>
+    <string name="security_questions">Security Questions</string>
+
     <!--Dialog-->
     <string name="dialog_ok">OK</string>
 </resources>

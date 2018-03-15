@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.p4.accountsaver.ui.account.AccountDetailViewModel.ViewType"/>
+        <variable
+            name="viewmodel"
+            type="com.p4.accountsaver.ui.account.AccountDetailViewModel" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/updated_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/updated"
+                    android:visibility="@{viewmodel.account.created != null ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"/>
+
+                <TextView
+                    android:id="@+id/date_text_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@{viewmodel.account.recentDateString}"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/updated_text_view"
+                    app:layout_constraintRight_toLeftOf="@id/lock_image_view" />
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/lock_image_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@{viewmodel.account.locked ? @drawable/ic_lock_close :@drawable/ic_lock_open}"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/logo_image_view"
+                    android:layout_width="0dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="8dp"
+                    app:imageUrl="@{viewmodel.account.gameIconUrl}"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{() -> viewmodel.selectImage()}"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/date_text_view" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/main_info_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_information"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/game_name_text_view"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:text="@string/game_name"
+                    app:layout_constraintBottom_toBottomOf="@id/game_name_edit_text"
+                    app:layout_constraintTop_toTopOf="@id/game_name_edit_text" />
+
+                <EditText
+                    android:id="@+id/game_name_edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:background="@drawable/et_sub_bg"
+                    android:textSize="14sp"
+                    android:padding="4dp"
+                    android:text="@={viewmodel.account.gameName}"
+                    android:enabled="@{viewmodel.isEditMode}"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    app:layout_constraintLeft_toRightOf="@id/game_name_text_view"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/main_info_text_view" />
+
+                <TextView
+                    android:id="@+id/username_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:text="@string/username"
+                    app:layout_constraintBottom_toBottomOf="@id/username_edit_text"
+                    app:layout_constraintTop_toTopOf="@id/username_edit_text" />
+
+                <EditText
+                    android:id="@+id/username_edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:background="@drawable/et_sub_bg"
+                    android:textSize="14sp"
+                    android:padding="4dp"
+                    android:text="@={viewmodel.account.username}"
+                    android:enabled="@{viewmodel.isEditMode}"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintLeft_toLeftOf="@id/game_name_edit_text"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/game_name_edit_text" />
+
+                <TextView
+                    android:id="@+id/password_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:text="@string/password"
+                    app:layout_constraintBottom_toBottomOf="@id/password_edit_text"
+                    app:layout_constraintTop_toTopOf="@id/password_edit_text" />
+
+                <EditText
+                    android:id="@+id/password_edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:background="@drawable/et_sub_bg"
+                    android:textSize="14sp"
+                    android:padding="4dp"
+                    android:text="@={viewmodel.account.password}"
+                    android:enabled="@{viewmodel.isEditMode}"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintLeft_toLeftOf="@id/username_edit_text"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/username_edit_text" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"/>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/sub_info_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sub_information"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/password2_text_view"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:text="@string/password_2"
+                    app:layout_constraintBottom_toBottomOf="@id/password2_edit_text"
+                    app:layout_constraintTop_toTopOf="@id/password2_edit_text" />
+
+                <EditText
+                    android:id="@+id/password2_edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:background="@drawable/et_sub_bg"
+                    android:textSize="14sp"
+                    android:padding="4dp"
+                    android:text="@={viewmodel.account.password2}"
+                    android:enabled="@{viewmodel.isEditMode}"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    app:layout_constraintLeft_toRightOf="@id/password2_text_view"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/sub_info_text_view" />
+
+                <TextView
+                    android:id="@+id/email_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:text="@string/email"
+                    app:layout_constraintBottom_toBottomOf="@id/email_edit_text"
+                    app:layout_constraintTop_toTopOf="@id/email_edit_text" />
+
+                <EditText
+                    android:id="@+id/email_edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:background="@drawable/et_sub_bg"
+                    android:textSize="14sp"
+                    android:padding="4dp"
+                    android:text="@={viewmodel.account.email}"
+                    android:enabled="@{viewmodel.isEditMode}"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintLeft_toLeftOf="@id/password2_edit_text"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/password2_edit_text" />
+
+                <TextView
+                    android:id="@+id/phone_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:text="@string/phone"
+                    app:layout_constraintBottom_toBottomOf="@id/phone_edit_text"
+                    app:layout_constraintTop_toTopOf="@id/phone_edit_text" />
+
+                <EditText
+                    android:id="@+id/phone_edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:background="@drawable/et_sub_bg"
+                    android:textSize="14sp"
+                    android:padding="4dp"
+                    android:text="@={viewmodel.account.phoneNumber}"
+                    android:enabled="@{viewmodel.isEditMode}"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintLeft_toLeftOf="@id/email_edit_text"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/email_edit_text" />
+
+            </android.support.constraint.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/description"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/description_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:inputType="textMultiLine"
+                    android:textSize="14sp"
+                    android:padding="4dp"
+                    android:gravity="top"
+                    android:text="@={viewmodel.account.description}"
+                    android:enabled="@{viewmodel.isEditMode}"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/et_sub_bg" />
+                
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"/>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/security_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/security_questions"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:background="?selectableItemBackground"
+                    android:text="0 Questions"
+                    app:layout_constraintTop_toTopOf="@id/arrow_text_view"
+                    app:layout_constraintBottom_toBottomOf="@id/arrow_text_view"/>
+
+                <TextView
+                    android:id="@+id/arrow_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=">"
+                    android:textSize="20sp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/security_text_view" />
+
+            </android.support.constraint.ConstraintLayout>
+            
+        </LinearLayout>
+
+    </ScrollView>
+
+</layout>

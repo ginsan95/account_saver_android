@@ -39,6 +39,7 @@
             app:srcCompat="@drawable/ic_add"
             app:fabSize="auto"
             app:useCompatPadding="true"
+            android:onClick="@{() -> viewmodel.addAccount()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
 

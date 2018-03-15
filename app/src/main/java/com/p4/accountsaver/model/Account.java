@@ -1,16 +1,19 @@
 package com.p4.accountsaver.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Created by averychoke on 3/3/18.
  */
 
-public class Account {
+public class Account implements Parcelable {
     // compulsary
     private String objectId;
     @SerializedName("game_name")
@@ -38,8 +41,13 @@ public class Account {
 
     }
 
-    public Date getRecentDate() {
-        return updated == null ? created : updated;
+    public String getRecentDateString() {
+        Date recentDate = updated == null ? created : updated;
+        if (recentDate != null) {
+            SimpleDateFormat df = new SimpleDateFormat("d/m/yyyy hh:mm a");
+            return df.format(recentDate);
+        }
+        return null;
     }
 
     // region Get Set
@@ -146,5 +154,64 @@ public class Account {
     public void setLockPassword(String lockPassword) {
         this.lockPassword = lockPassword;
     }
+    // endregion
+
+    // region Parcelable
+    protected Account(Parcel in) {
+        objectId = in.readString();
+        gameName = in.readString();
+        username = in.readString();
+        password = in.readString();
+        isLocked = in.readByte() != 0;
+        created = new Date(in.readLong());
+        if (in.readByte() != 0) {
+            updated = new Date(in.readLong());
+        }
+        gameIconUrl = in.readString();
+        password2 = in.readString();
+        email = in.readString();
+        phoneNumber = in.readString();
+        description = in.readString();
+        lockPassword = in.readString();
+        securityQuestions = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(objectId);
+        dest.writeString(gameName);
+        dest.writeString(username);
+        dest.writeString(password);
+        dest.writeByte((byte) (isLocked ? 1 : 0));
+        dest.writeLong(created.getTime());
+        dest.writeByte((byte) (updated != null ? 1 : 0));
+        if (updated != null) {
+            dest.writeLong(updated.getTime());
+        }
+        dest.writeString(gameIconUrl);
+        dest.writeString(password2);
+        dest.writeString(email);
+        dest.writeString(phoneNumber);
+        dest.writeString(description);
+        dest.writeString(lockPassword);
+        dest.writeString(securityQuestions);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Account> CREATOR = new Creator<Account>() {
+        @Override
+        public Account createFromParcel(Parcel in) {
+            return new Account(in);
+        }
+
+        @Override
+        public Account[] newArray(int size) {
+            return new Account[size];
+        }
+    };
     // endregion
 }

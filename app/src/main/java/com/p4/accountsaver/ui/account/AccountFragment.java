@@ -3,6 +3,7 @@ package com.p4.accountsaver.ui.account;
 import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
@@ -56,8 +57,13 @@ public class AccountFragment extends BaseFragment {
         mAdapter = new AccountAdapter(mViewModel);
         initRecyclerView();
 
+        mViewModel.getAddAccountEvent().observe(this, (Void nth) -> {
+            startActivity(new Intent(getActivity(), AccountDetailActivity.class));
+        });
         mViewModel.getViewDetailsEvent().observe(this, (Account account) -> {
-            Log.d(AccountFragment.class.getSimpleName(), "view details " + account);
+            Intent intent = new Intent(getActivity(), AccountDetailActivity.class);
+            intent.putExtra(AccountDetailActivity.ACCOUNT_EXTRA, account);
+            startActivity(intent);
         });
         mViewModel.getLockConfirmationEvent().observe(this, (Account account) -> {
             Log.d(AccountFragment.class.getSimpleName(), "open lock");

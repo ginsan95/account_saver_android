@@ -2,6 +2,7 @@ package com.p4.accountsaver.ui.account;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
@@ -28,6 +29,7 @@ public class AccountViewModel extends AndroidViewModel implements AccountAdapter
     public final ObservableBoolean isRefreshing = new ObservableBoolean();
     public final ObservableBoolean isPaginating = new ObservableBoolean();
 
+    private final MutableLiveData<Void> mAddAccountEvent = new MutableLiveData<>();
     private final MutableLiveData<Account> mViewDetailsEvent = new MutableLiveData<>();
     private final MutableLiveData<Account> mLockConfirmationEvent = new MutableLiveData<>();
 
@@ -64,6 +66,10 @@ public class AccountViewModel extends AndroidViewModel implements AccountAdapter
             mSearchTerm = "";
             onRefresh();
         }
+    }
+
+    public void addAccount() {
+        mViewDetailsEvent.setValue(null);
     }
 
     private void fetchAccounts(int offset) {
@@ -113,11 +119,15 @@ public class AccountViewModel extends AndroidViewModel implements AccountAdapter
     }
 
     // region get set
-    public MutableLiveData<Account> getViewDetailsEvent() {
+    public LiveData<Void> getAddAccountEvent() {
+        return mAddAccountEvent;
+    }
+
+    public LiveData<Account> getViewDetailsEvent() {
         return mViewDetailsEvent;
     }
 
-    public MutableLiveData<Account> getLockConfirmationEvent() {
+    public LiveData<Account> getLockConfirmationEvent() {
         return mLockConfirmationEvent;
     }
     // endregion
