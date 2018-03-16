@@ -1,5 +1,6 @@
 package com.p4.accountsaver.ui.account;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -30,6 +31,7 @@ import com.p4.accountsaver.ui.base.BaseFragment;
  */
 
 public class AccountFragment extends BaseFragment {
+    private static final int VIEW_REQUEST_CODE = 1;
     private FragmentAccountBinding mBinding;
     private AccountViewModel mViewModel;
     private AccountAdapter mAdapter;
@@ -58,12 +60,12 @@ public class AccountFragment extends BaseFragment {
         initRecyclerView();
 
         mViewModel.getAddAccountEvent().observe(this, (Void nth) -> {
-            startActivity(new Intent(getActivity(), AccountDetailActivity.class));
+            startActivityForResult(new Intent(getActivity(), AccountDetailActivity.class), VIEW_REQUEST_CODE);
         });
         mViewModel.getViewDetailsEvent().observe(this, (Account account) -> {
             Intent intent = new Intent(getActivity(), AccountDetailActivity.class);
             intent.putExtra(AccountDetailActivity.ACCOUNT_EXTRA, account);
-            startActivity(intent);
+            startActivityForResult(intent, VIEW_REQUEST_CODE);
         });
         mViewModel.getLockConfirmationEvent().observe(this, (Account account) -> {
             Log.d(AccountFragment.class.getSimpleName(), "open lock");
@@ -114,6 +116,18 @@ public class AccountFragment extends BaseFragment {
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case VIEW_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK && mViewModel != null) {
+                    mViewModel.start();
+                }
+                break;
+        }
     }
 
     private void initRecyclerView() {

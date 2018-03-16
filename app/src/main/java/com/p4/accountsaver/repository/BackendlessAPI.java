@@ -86,6 +86,7 @@ public class BackendlessAPI {
         });
     }
 
+    // region Account
     public void fetchAccounts(int offset, String searchTerm, API.ApiListener<List<Account>> listener) {
         StringBuilder sb = new StringBuilder();
         if (ProfileManager.getInstance().getProfile() != null) {
@@ -117,4 +118,41 @@ public class BackendlessAPI {
             }
         });
     }
+
+    public void saveAccount(Account account, API.ApiListener<Account> listener) {
+        mApi.saveAccount(account).enqueue(new Callback<Account>() {
+            @Override
+            public void onResponse(Call<Account> call, Response<Account> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    listener.onSuccess(response.body());
+                } else {
+                    listener.onFailure(new ApiError(response.errorBody()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Account> call, Throwable t) {
+                listener.onFailure(new ApiError(t));
+            }
+        });
+    }
+
+    public void updateAccount(Account account, API.ApiListener<Account> listener) {
+        mApi.updateAccount(account.getObjectId(), account).enqueue(new Callback<Account>() {
+            @Override
+            public void onResponse(Call<Account> call, Response<Account> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    listener.onSuccess(response.body());
+                } else {
+                    listener.onFailure(new ApiError(response.errorBody()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Account> call, Throwable t) {
+                listener.onFailure(new ApiError(t));
+            }
+        });
+    }
+    // endregion
 }

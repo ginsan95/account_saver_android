@@ -4,10 +4,11 @@ package com.p4.accountsaver.repository;
  * Created by averychoke on 1/3/18.
  */
 
-public class ApiEvent {
+public class ApiEvent<T> {
     private boolean mInProgress;
     private boolean mSuccess;
     private ApiError mError;
+    private T mResultData;
 
     public ApiEvent() {}
 
@@ -35,14 +36,22 @@ public class ApiEvent {
         mError = error;
     }
 
-    public static class Builder {
-        private ApiEvent mEvent;
+    public T getResultData() {
+        return mResultData;
+    }
+
+    private void setResultData(T resultData) {
+        mResultData = resultData;
+    }
+
+    public static class Builder<T> {
+        private ApiEvent<T> mEvent;
 
         public Builder() {
-            mEvent = new ApiEvent();
+            mEvent = new ApiEvent<>();
         }
 
-        public ApiEvent build() {
+        public ApiEvent<T> build() {
             return mEvent;
         }
 
@@ -58,6 +67,11 @@ public class ApiEvent {
 
         public Builder setError(ApiError error) {
             mEvent.setError(error);
+            return this;
+        }
+
+        public Builder setResultData(T resultData) {
+            mEvent.setResultData(resultData);
             return this;
         }
     }

@@ -1,5 +1,7 @@
 package com.p4.accountsaver.ui.account;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,11 +12,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.p4.accountsaver.R;
 import com.p4.accountsaver.databinding.FragmentAccountDetailBinding;
 import com.p4.accountsaver.model.Account;
+import com.p4.accountsaver.repository.ApiEvent;
 import com.p4.accountsaver.ui.base.BaseFragment;
+import com.p4.accountsaver.utils.DialogUtils;
 
 /**
  * Created by averychoke on 11/3/18.
@@ -23,6 +28,7 @@ import com.p4.accountsaver.ui.base.BaseFragment;
 public class AccountDetailFragment extends BaseFragment {
     private FragmentAccountDetailBinding mBinding;
     private AccountDetailViewModel mViewModel;
+    private ProgressDialog mProgressDialog;
 
     public static AccountDetailFragment newInstance(Account account) {
         Bundle args = new Bundle();
@@ -65,6 +71,22 @@ public class AccountDetailFragment extends BaseFragment {
             }
         });
 
+        mViewModel.getSaveEditEvent().observe(this, (ApiEvent<Account> event) -> {
+            if (event != null) {
+                if (event.isInProgress()) {
+                    getProgressDialog().show();
+                } else {
+                    getProgressDialog().dismiss();
+                    if (event.isSuccess() && event.getResultData() != null && getActivity() != null) {
+                        getActivity().setResult(Activity.RESULT_OK);
+                        getActivity().finish();
+                    } else if (event.getError() != null) {
+                        DialogUtils.showErrorDialog(getActivity(), event.getError().getMessage());
+                    }
+                }
+            }
+        });
+
         Account account = getArguments().getParcelable(AccountDetailActivity.ACCOUNT_EXTRA);
         mViewModel.start(account);
     }
@@ -77,8 +99,9 @@ public class AccountDetailFragment extends BaseFragment {
                 case VIEW:
                     menu.findItem(R.id.action_save_edit).setIcon(R.drawable.ic_edit);
                     break;
-                case ADD:
                 case EDIT:
+                    Toast.makeText(getActivity(), R.string.edit_mode, Toast.LENGTH_SHORT).show();
+                case ADD:
                     menu.findItem(R.id.action_save_edit).setIcon(R.drawable.ic_save);
                     break;
             }
@@ -99,5 +122,14 @@ public class AccountDetailFragment extends BaseFragment {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private ProgressDialog getProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setCancelable(false);
+        }
+        return mProgressDialog;
     }
 }
