@@ -38,6 +38,7 @@ public class AccountAdapter extends BindingRecyclerAdapter<AccountAdapter.Accoun
     public static class AccountCell extends RecyclerView.ViewHolder {
         public interface AccountListener {
             void onAccountSelected(Account account);
+            boolean onAccountLongClicked(Account account);
         }
 
         private CellAccountBinding mBinding;

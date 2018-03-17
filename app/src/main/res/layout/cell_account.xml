@@ -17,7 +17,8 @@
         android:clickable="true"
         android:focusable="true"
         android:background="?selectableItemBackground"
-        android:onClick="@{() -> listener.onAccountSelected(account)}">
+        android:onClick="@{() -> listener.onAccountSelected(account)}"
+        android:onLongClick="@{() -> listener.onAccountLongClicked(account)}" >
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/logo_image_view"

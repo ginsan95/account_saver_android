@@ -72,6 +72,21 @@ public class AccountViewModel extends AndroidViewModel implements AccountAdapter
         mViewDetailsEvent.setValue(null);
     }
 
+    @Override
+    public void onAccountSelected(Account account) {
+        if (account.isLocked()) {
+            mLockConfirmationEvent.setValue(account);
+        } else {
+            mViewDetailsEvent.setValue(account);
+        }
+    }
+
+    @Override
+    public boolean onAccountLongClicked(Account account) {
+        deleteAccount(account);
+        return true;
+    }
+
     private void fetchAccounts(int offset) {
         mIsFetching = true;
         if (offset == 0) {
@@ -109,12 +124,21 @@ public class AccountViewModel extends AndroidViewModel implements AccountAdapter
         });
     }
 
-    @Override
-    public void onAccountSelected(Account account) {
-        if (account.isLocked()) {
-            mLockConfirmationEvent.setValue(account);
-        } else {
-            mViewDetailsEvent.setValue(account);
+    private void deleteAccount(Account account) {
+        if (account.getObjectId() != null) {
+            BackendlessAPI.getInstance().deleteAccount(account.getObjectId(), new API.ApiListener<Boolean>() {
+                @Override
+                public void onSuccess(Boolean success) {
+                    if (success) {
+                        accounts.remove(account);
+                    }
+                }
+
+                @Override
+                public void onFailure(ApiError error) {
+                    Log.e(TAG, error.getMessage());
+                }
+            });
         }
     }
 

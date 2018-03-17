@@ -5,8 +5,10 @@ import com.p4.accountsaver.model.Profile;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -30,6 +32,9 @@ public interface API {
 
     @PUT("data/Account/{id}")
     Call<Account> updateAccount(@Path("id") String id, @Body Account account);
+
+    @DELETE("data/Account/{id}")
+    Call<ResponseBody> deleteAccount(@Path("id") String id);
     // endregion
 
 

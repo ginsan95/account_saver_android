@@ -13,6 +13,10 @@ import com.p4.accountsaver.manager.ProfileManager;
 import com.p4.accountsaver.model.Account;
 import com.p4.accountsaver.model.Profile;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
@@ -20,6 +24,7 @@ import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -150,6 +155,30 @@ public class BackendlessAPI {
 
             @Override
             public void onFailure(Call<Account> call, Throwable t) {
+                listener.onFailure(new ApiError(t));
+            }
+        });
+    }
+
+    public void deleteAccount(String id, API.ApiListener<Boolean> listener) {
+        mApi.deleteAccount(id).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response.body().string());
+                        listener.onSuccess(jsonObject.has("deletionTime"));
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                        listener.onSuccess(false);
+                    }
+                } else {
+                    listener.onFailure(new ApiError(response.errorBody()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 listener.onFailure(new ApiError(t));
             }
         });
