@@ -18,6 +18,7 @@ import com.p4.accountsaver.R;
 import com.p4.accountsaver.databinding.FragmentAccountDetailBinding;
 import com.p4.accountsaver.model.Account;
 import com.p4.accountsaver.repository.ApiEvent;
+import com.p4.accountsaver.ui.account.dialog.LockDialog;
 import com.p4.accountsaver.ui.base.BaseFragment;
 import com.p4.accountsaver.utils.DialogUtils;
 
@@ -25,7 +26,7 @@ import com.p4.accountsaver.utils.DialogUtils;
  * Created by averychoke on 11/3/18.
  */
 
-public class AccountDetailFragment extends BaseFragment {
+public class AccountDetailFragment extends BaseFragment implements LockDialog.LockDialogListener {
     private FragmentAccountDetailBinding mBinding;
     private AccountDetailViewModel mViewModel;
     private ProgressDialog mProgressDialog;
@@ -68,6 +69,12 @@ public class AccountDetailFragment extends BaseFragment {
         mViewModel.getViewType().observe(this, (AccountDetailViewModel.ViewType viewType) -> {
             if (viewType != null && getActivity() != null) {
                 getActivity().invalidateOptionsMenu();
+            }
+        });
+
+        mViewModel.getChangeLockEvent().observe(this, (String title) -> {
+            if (title != null && getActivity() != null && !getActivity().isFinishing()) {
+                LockDialog.newInstance(title).show(getChildFragmentManager(), AccountFragment.class.getSimpleName());
             }
         });
 
@@ -122,6 +129,18 @@ public class AccountDetailFragment extends BaseFragment {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onLockPasswordPlaced(Account account, String password, String confirmPassword) {
+        if (mViewModel != null) {
+            String message = mViewModel.changeLockStatus(password, confirmPassword);
+            if (message == null) {
+                
+            } else {
+                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private ProgressDialog getProgressDialog() {

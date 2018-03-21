@@ -19,18 +19,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.p4.accountsaver.R;
 import com.p4.accountsaver.databinding.FragmentAccountBinding;
 import com.p4.accountsaver.model.Account;
 import com.p4.accountsaver.ui.account.adapters.AccountAdapter;
+import com.p4.accountsaver.ui.account.dialog.LockDialog;
 import com.p4.accountsaver.ui.base.BaseFragment;
 
 /**
  * Created by averychoke on 5/3/18.
  */
 
-public class AccountFragment extends BaseFragment {
+public class AccountFragment extends BaseFragment implements LockDialog.LockDialogListener {
     private static final int VIEW_REQUEST_CODE = 1;
     private FragmentAccountBinding mBinding;
     private AccountViewModel mViewModel;
@@ -62,14 +64,19 @@ public class AccountFragment extends BaseFragment {
         mViewModel.getAddAccountEvent().observe(this, (Void nth) -> {
             startActivityForResult(new Intent(getActivity(), AccountDetailActivity.class), VIEW_REQUEST_CODE);
         });
+
         mViewModel.getViewDetailsEvent().observe(this, (Account account) -> {
             Intent intent = new Intent(getActivity(), AccountDetailActivity.class);
             intent.putExtra(AccountDetailActivity.ACCOUNT_EXTRA, account);
             startActivityForResult(intent, VIEW_REQUEST_CODE);
         });
+
         mViewModel.getLockConfirmationEvent().observe(this, (Account account) -> {
-            Log.d(AccountFragment.class.getSimpleName(), "open lock");
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                LockDialog.newInstance(account).show(getChildFragmentManager(), AccountFragment.class.getSimpleName());
+            }
         });
+
         mViewModel.start();
     }
 
@@ -156,5 +163,19 @@ public class AccountFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    @Override
+    public void onLockPasswordPlaced(Account account, String password, String confirmPassword) {
+        if (mViewModel != null) {
+            String message = mViewModel.checkAccountLockPassword(account, password, confirmPassword);
+            if (message == null) {
+                Intent intent = new Intent(getActivity(), AccountDetailActivity.class);
+                intent.putExtra(AccountDetailActivity.ACCOUNT_EXTRA, account);
+                startActivityForResult(intent, VIEW_REQUEST_CODE);
+            } else {
+                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

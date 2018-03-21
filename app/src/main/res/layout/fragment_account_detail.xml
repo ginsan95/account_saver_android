@@ -49,6 +49,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@{viewmodel.account.locked ? @drawable/ic_lock_close :@drawable/ic_lock_open}"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{() -> viewmodel.showLockDialog()}"
+                    android:visibility="@{viewmodel.isEditMode || viewmodel.account.locked ? View.VISIBLE : View.GONE}"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 

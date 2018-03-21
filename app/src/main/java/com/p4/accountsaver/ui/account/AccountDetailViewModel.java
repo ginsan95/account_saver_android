@@ -40,6 +40,7 @@ public class AccountDetailViewModel extends AndroidViewModel {
     private final MutableLiveData<ViewType> mViewType = new MutableLiveData<>();
     private final MutableLiveData<String> mTitle = new MutableLiveData<>();
     private final MutableLiveData<ApiEvent<Account>> mSaveEditEvent = new MutableLiveData<>();
+    private final MutableLiveData<String> mChangeLockEvent = new MutableLiveData<>();
 
     public AccountDetailViewModel(@NonNull Application application) {
         super(application);
@@ -75,6 +76,24 @@ public class AccountDetailViewModel extends AndroidViewModel {
 
     public void selectImage() {
         Log.d("selectImage", "selectImage");
+    }
+
+    public void showLockDialog() {
+        if (isEditMode.get()) {
+            mChangeLockEvent.setValue(mAccount.isLocked() ?
+                    mContext.getString(R.string.dialog_lock_unloack_title) : mContext.getString(R.string.dialog_lock_add_title));
+        }
+    }
+
+    public String changeLockStatus(String password, String confirmPassword) {
+        if (!password.equals(confirmPassword)) {
+            return mContext.getString(R.string.password_diff_message);
+        } else if (mAccount.isLocked() && mAccount.getLockPassword() != null && !password.equals(mAccount.getLockPassword())) {
+            return mContext.getString(R.string.incorrect_lock_password);
+        } else {
+            mAccount.setLocked(!mAccount.isLocked());
+            return null;
+        }
     }
 
     private boolean checkCompulsaryData() {
@@ -156,6 +175,10 @@ public class AccountDetailViewModel extends AndroidViewModel {
 
     public LiveData<ApiEvent<Account>> getSaveEditEvent() {
         return mSaveEditEvent;
+    }
+
+    public LiveData<String> getChangeLockEvent() {
+        return mChangeLockEvent;
     }
     // endregion
 }

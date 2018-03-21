@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.Context;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
@@ -11,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.p4.accountsaver.R;
 import com.p4.accountsaver.model.Account;
 import com.p4.accountsaver.repository.API;
 import com.p4.accountsaver.repository.ApiError;
@@ -25,6 +27,10 @@ import java.util.List;
 
 public class AccountViewModel extends AndroidViewModel implements AccountAdapter.AccountCell.AccountListener {
     private final String TAG = AccountViewModel.class.getSimpleName();
+    private Context mContext;
+    private boolean mIsFetching = false;
+    private String mSearchTerm = "";
+
     public final ObservableList<Account> accounts = new ObservableArrayList<>();
     public final ObservableBoolean isRefreshing = new ObservableBoolean();
     public final ObservableBoolean isPaginating = new ObservableBoolean();
@@ -33,11 +39,9 @@ public class AccountViewModel extends AndroidViewModel implements AccountAdapter
     private final MutableLiveData<Account> mViewDetailsEvent = new MutableLiveData<>();
     private final MutableLiveData<Account> mLockConfirmationEvent = new MutableLiveData<>();
 
-    private boolean mIsFetching = false;
-    private String mSearchTerm = "";
-
     public AccountViewModel(@NonNull Application application) {
         super(application);
+        mContext = application.getApplicationContext();
     }
 
     public void start() {
@@ -70,6 +74,16 @@ public class AccountViewModel extends AndroidViewModel implements AccountAdapter
 
     public void addAccount() {
         mViewDetailsEvent.setValue(null);
+    }
+
+    public String checkAccountLockPassword(Account account, String password, String confirmPassword) {
+        if (!password.equals(confirmPassword)) {
+            return mContext.getString(R.string.password_diff_message);
+        } else if (account.getLockPassword() != null && !password.equals(account.getLockPassword())) {
+            return mContext.getString(R.string.incorrect_lock_password);
+        } else {
+            return null;
+        }
     }
 
     @Override
