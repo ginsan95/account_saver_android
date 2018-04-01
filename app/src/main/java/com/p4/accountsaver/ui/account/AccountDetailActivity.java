@@ -28,7 +28,17 @@ public class AccountDetailActivity extends BaseActivity {
         Account account = getIntent().getParcelableExtra(ACCOUNT_EXTRA);
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(mBinding.containerLayout.getId(), AccountDetailFragment.newInstance(account))
+                .add(mBinding.containerLayout.getId(), AccountDetailFragment.newInstance(account), AccountDetailFragment.class.getSimpleName())
                 .commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        AccountDetailFragment fragment = (AccountDetailFragment) getSupportFragmentManager().findFragmentByTag(AccountDetailFragment.class.getSimpleName());
+        if (fragment != null && fragment.isVisible()) {
+            fragment.onBackPressed();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

@@ -41,6 +41,25 @@ public class Account implements Parcelable {
 
     }
 
+    public Account getClone() {
+        Account account = new Account();
+        account.objectId = objectId;
+        account.gameName = gameName;
+        account.username = username;
+        account.password = password;
+        account.isLocked = isLocked;
+        account.created = created;
+        account.updated = updated;
+        account.gameIconUrl = gameIconUrl;
+        account.password2 = password2;
+        account.email = email;
+        account.phoneNumber = phoneNumber;
+        account.description = description;
+        account.lockPassword = lockPassword;
+        account.securityQuestions = securityQuestions;
+        return account;
+    }
+
     public String getRecentDateString() {
         Date recentDate = updated == null ? created : updated;
         if (recentDate != null) {

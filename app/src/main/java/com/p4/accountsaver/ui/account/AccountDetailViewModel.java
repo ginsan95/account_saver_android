@@ -30,8 +30,9 @@ public class AccountDetailViewModel extends AndroidViewModel {
     }
 
     private Context mContext;
-    private Account mAccount;
+    private Account mPrevAccount;
 
+    public final ObservableField<Account> account = new ObservableField<>();
     public final ObservableBoolean isEditMode = new ObservableBoolean(false);
     public final ObservableField<String> gameNameError = new ObservableField<>();
     public final ObservableField<String> usernameError = new ObservableField<>();
@@ -41,6 +42,7 @@ public class AccountDetailViewModel extends AndroidViewModel {
     private final MutableLiveData<String> mTitle = new MutableLiveData<>();
     private final MutableLiveData<ApiEvent<Account>> mSaveEditEvent = new MutableLiveData<>();
     private final MutableLiveData<String> mChangeLockEvent = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mBackPressedEvent = new MutableLiveData<>();
 
     public AccountDetailViewModel(@NonNull Application application) {
         super(application);
@@ -49,11 +51,11 @@ public class AccountDetailViewModel extends AndroidViewModel {
 
     public void start(@Nullable Account account) {
         if (account != null) {
-            mAccount = account;
+            this.account.set(account);
             mTitle.setValue(account.getGameName());
             setViewType(ViewType.VIEW);
         } else {
-            mAccount = new Account();
+            this.account.set(new Account());
             mTitle.setValue(mContext.getString(R.string.new_account_title));
             setViewType(ViewType.ADD);
         }
@@ -80,7 +82,7 @@ public class AccountDetailViewModel extends AndroidViewModel {
 
     public void showLockDialog() {
         if (isEditMode.get()) {
-            mChangeLockEvent.setValue(mAccount.isLocked() ?
+            mChangeLockEvent.setValue(account.get().isLocked() ?
                     mContext.getString(R.string.dialog_lock_unloack_title) : mContext.getString(R.string.dialog_lock_add_title));
         }
     }
@@ -88,22 +90,26 @@ public class AccountDetailViewModel extends AndroidViewModel {
     public String changeLockStatus(String password, String confirmPassword) {
         if (!password.equals(confirmPassword)) {
             return mContext.getString(R.string.password_diff_message);
-        } else if (mAccount.isLocked() && mAccount.getLockPassword() != null && !password.equals(mAccount.getLockPassword())) {
+        } else if (account.get().isLocked() && account.get().getLockPassword() != null && !password.equals(account.get().getLockPassword())) {
             return mContext.getString(R.string.incorrect_lock_password);
         } else {
-            mAccount.setLocked(!mAccount.isLocked());
+            account.get().setLocked(!account.get().isLocked());
+            if (account.get().isLocked()) {
+                account.get().setLockPassword(password);
+            }
+            account.notifyChange();
             return null;
         }
     }
 
     private boolean checkCompulsaryData() {
-        if (TextUtils.isEmpty(mAccount.getGameName())) {
+        if (TextUtils.isEmpty(account.get().getGameName())) {
             gameNameError.set(mContext.getString(R.string.game_name_empty_error));
             return false;
-        } else if (TextUtils.isEmpty(mAccount.getUsername())) {
+        } else if (TextUtils.isEmpty(account.get().getUsername())) {
             usernameError.set(mContext.getString(R.string.username_empty_error));
             return false;
-        } else if (TextUtils.isEmpty(mAccount.getPassword())) {
+        } else if (TextUtils.isEmpty(account.get().getPassword())) {
             passwordError.set(mContext.getString(R.string.password_empty_error));
             return false;
         } else {
@@ -111,10 +117,18 @@ public class AccountDetailViewModel extends AndroidViewModel {
         }
     }
 
+    public void onBackPressed() {
+        mBackPressedEvent.setValue(getViewType().getValue() == ViewType.EDIT);
+    }
+
+    public void dismissEdit() {
+        setViewType(ViewType.VIEW);
+    }
+
     private void saveAccount() {
-        if (mAccount != null && checkCompulsaryData()) {
+        if (account.get() != null && checkCompulsaryData()) {
             mSaveEditEvent.setValue(new ApiEvent.Builder().inProgress(true).build());
-            BackendlessAPI.getInstance().saveAccount(mAccount, new API.ApiListener<Account>() {
+            BackendlessAPI.getInstance().saveAccount(account.get(), new API.ApiListener<Account>() {
                 @Override
                 public void onSuccess(Account account) {
                     mSaveEditEvent.setValue(new ApiEvent.Builder().success(true).setResultData(account).build());
@@ -129,9 +143,9 @@ public class AccountDetailViewModel extends AndroidViewModel {
     }
 
     private void updateAccount() {
-        if (mAccount != null && checkCompulsaryData()) {
+        if (account.get() != null && checkCompulsaryData()) {
             mSaveEditEvent.setValue(new ApiEvent.Builder().inProgress(true).build());
-            BackendlessAPI.getInstance().updateAccount(mAccount, new API.ApiListener<Account>() {
+            BackendlessAPI.getInstance().updateAccount(account.get(), new API.ApiListener<Account>() {
                 @Override
                 public void onSuccess(Account account) {
                     mSaveEditEvent.setValue(new ApiEvent.Builder().success(true).setResultData(account).build());
@@ -146,10 +160,6 @@ public class AccountDetailViewModel extends AndroidViewModel {
     }
 
     // region Get Set
-    public Account getAccount() {
-        return mAccount;
-    }
-
     public LiveData<ViewType> getViewType() {
         return mViewType;
     }
@@ -158,12 +168,17 @@ public class AccountDetailViewModel extends AndroidViewModel {
         mViewType.setValue(viewType);
         switch (viewType) {
             case VIEW:
+                if (mPrevAccount != null) {
+                    account.set(mPrevAccount);
+                }
                 isEditMode.set(false);
                 break;
             case ADD:
                 isEditMode.set(true);
                 break;
             case EDIT:
+                mPrevAccount = account.get();
+                account.set(account.get().getClone());
                 isEditMode.set(true);
                 break;
         }
@@ -179,6 +194,10 @@ public class AccountDetailViewModel extends AndroidViewModel {
 
     public LiveData<String> getChangeLockEvent() {
         return mChangeLockEvent;
+    }
+
+    public LiveData<Boolean> getBackPressedEvent() {
+        return mBackPressedEvent;
     }
     // endregion
 }

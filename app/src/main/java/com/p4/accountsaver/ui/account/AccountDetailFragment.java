@@ -3,9 +3,11 @@ package com.p4.accountsaver.ui.account;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -94,6 +96,24 @@ public class AccountDetailFragment extends BaseFragment implements LockDialog.Lo
             }
         });
 
+        mViewModel.getBackPressedEvent().observe(this, (Boolean showConfirmDialog) -> {
+            if (showConfirmDialog != null && showConfirmDialog && getActivity() != null && !getActivity().isDestroyed()) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.edit_dismiss_message)
+                        .setPositiveButton(R.string.dialog_ok, (DialogInterface dialog, int which) -> {
+                            if (mViewModel != null) {
+                                mViewModel.dismissEdit();
+                            }
+                        })
+                        .setNegativeButton(R.string.dialog_cancel, (DialogInterface dialog, int which) -> {
+
+                        })
+                        .show();
+            } else {
+                getActivity().finish();
+            }
+        });
+
         Account account = getArguments().getParcelable(AccountDetailActivity.ACCOUNT_EXTRA);
         mViewModel.start(account);
     }
@@ -135,11 +155,15 @@ public class AccountDetailFragment extends BaseFragment implements LockDialog.Lo
     public void onLockPasswordPlaced(Account account, String password, String confirmPassword) {
         if (mViewModel != null) {
             String message = mViewModel.changeLockStatus(password, confirmPassword);
-            if (message == null) {
-                
-            } else {
+            if (message != null) {
                 Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    public void onBackPressed() {
+        if (mViewModel != null) {
+            mViewModel.onBackPressed();
         }
     }
 
