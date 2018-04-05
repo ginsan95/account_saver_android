@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.p4.accountsaver.R;
+import com.p4.accountsaver.manager.ProfileManager;
 import com.p4.accountsaver.model.Profile;
 import com.p4.accountsaver.repository.API;
 import com.p4.accountsaver.repository.ApiError;
@@ -45,7 +46,7 @@ public class LoginViewModel extends AndroidViewModel {
             passwordError.set(mContext.getString(R.string.password_empty_error));
         } else {
             mLoginEvent.setValue(new ApiEvent.Builder().inProgress(true).build());
-            BackendlessAPI.getInstance().login(username.get(), password.get(), new API.ApiListener<Profile>() {
+            ProfileManager.getInstance().login(username.get(), password.get(), new API.ApiListener<Profile>() {
                 @Override
                 public void onSuccess(Profile object) {
                     mLoginEvent.setValue(new ApiEvent.Builder().success(true).build());

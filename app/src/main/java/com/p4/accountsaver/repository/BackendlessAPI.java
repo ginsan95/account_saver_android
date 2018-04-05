@@ -95,8 +95,9 @@ public class BackendlessAPI {
     public void fetchAccounts(int offset, String searchTerm, API.ApiListener<List<Account>> listener) {
         StringBuilder sb = new StringBuilder();
         if (ProfileManager.getInstance().getProfile() != null) {
-            sb.append("ownerId=");
+            sb.append("ownerId='");
             sb.append(ProfileManager.getInstance().getProfile().getOwnerId());
+            sb.append("'");
         }
         if (!TextUtils.isEmpty(searchTerm)) {
             if (sb.length() > 0) {
