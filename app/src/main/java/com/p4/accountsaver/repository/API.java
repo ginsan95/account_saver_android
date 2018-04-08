@@ -35,6 +35,12 @@ public interface API {
 
     @DELETE("data/Account/{id}")
     Call<ResponseBody> deleteAccount(@Path("id") String id);
+
+    @GET("files/game_icon/{id}?pageSize=100")
+    Call<List<FileBody>> fetchGameIcons(@Path("id") String id);
+
+    @DELETE("{url}")
+    Call<ResponseBody> deleteGameIcon(@Path(value = "url", encoded = true) String url);
     // endregion
 
 
@@ -47,6 +53,13 @@ public interface API {
             this.login = login;
             this.password = password;
         }
+    }
+
+    class FileBody {
+        public String name;
+        public String publicUrl;
+        public int size;
+        public String url;
     }
     // endregion
 

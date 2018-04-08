@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -181,6 +182,49 @@ public class BackendlessAPI {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 listener.onFailure(new ApiError(t));
+            }
+        });
+    }
+    // endregion
+
+    // region Game Icons
+    public void fetchGameIcons(API.ApiListener<List<String>> listener) {
+        mApi.fetchGameIcons(ProfileManager.getInstance().getProfile().getOwnerId()).enqueue(new Callback<List<API.FileBody>>() {
+            @Override
+            public void onResponse(Call<List<API.FileBody>> call, Response<List<API.FileBody>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<String> gameIcons = new ArrayList<>();
+                    if (response.isSuccessful() && response.body() != null) {
+                        for (API.FileBody fileBody : response.body()) {
+                            if (fileBody.publicUrl != null) {
+                                gameIcons.add(fileBody.publicUrl);
+                            }
+                        }
+                    }
+                    listener.onSuccess(gameIcons);
+                } else {
+                    listener.onFailure(new ApiError(response.errorBody()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<API.FileBody>> call, Throwable t) {
+                listener.onFailure(new ApiError(t));
+            }
+        });
+    }
+
+    public void deleteGameIcons(String url) {
+        String subUrl = url.substring(BASE_URL.length());
+        mApi.deleteGameIcon(subUrl).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
             }
         });
     }

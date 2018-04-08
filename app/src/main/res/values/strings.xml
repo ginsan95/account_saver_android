@@ -47,6 +47,10 @@
     <string name="password_diff_message">Password and confirm password are not the same</string>
     <string name="incorrect_lock_password">Wrong lock password</string>
 
+    <!--Game Icon-->
+    <string name="game_icon_title">Game Icons</string>
+    <string name="done">Done</string>
+
     <!--Dialog-->
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>

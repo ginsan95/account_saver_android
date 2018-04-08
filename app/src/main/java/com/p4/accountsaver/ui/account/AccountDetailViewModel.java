@@ -43,6 +43,7 @@ public class AccountDetailViewModel extends AndroidViewModel {
     private final MutableLiveData<ApiEvent<Account>> mSaveEditEvent = new MutableLiveData<>();
     private final MutableLiveData<String> mChangeLockEvent = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mBackPressedEvent = new MutableLiveData<>();
+    private final MutableLiveData<String> mSelectImageEvent = new MutableLiveData<>();
 
     public AccountDetailViewModel(@NonNull Application application) {
         super(application);
@@ -77,7 +78,12 @@ public class AccountDetailViewModel extends AndroidViewModel {
     }
 
     public void selectImage() {
-        Log.d("selectImage", "selectImage");
+        switch (mViewType.getValue()) {
+            case ADD:
+            case EDIT:
+                mSelectImageEvent.setValue(account.get().getGameIconUrl());
+                break;
+        }
     }
 
     public void showLockDialog() {
@@ -115,6 +121,11 @@ public class AccountDetailViewModel extends AndroidViewModel {
         } else {
             return true;
         }
+    }
+
+    public void setAccountIcon(String url) {
+        account.get().setGameIconUrl(url);
+        account.notifyChange();
     }
 
     public void onBackPressed() {
@@ -198,6 +209,10 @@ public class AccountDetailViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getBackPressedEvent() {
         return mBackPressedEvent;
+    }
+
+    public LiveData<String> getSelectImageEvent() {
+        return mSelectImageEvent;
     }
     // endregion
 }

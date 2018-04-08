@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,6 +30,7 @@ import com.p4.accountsaver.utils.DialogUtils;
  */
 
 public class AccountDetailFragment extends BaseFragment implements LockDialog.LockDialogListener {
+    private static final int ICON_REQUEST_CODE = 1;
     private FragmentAccountDetailBinding mBinding;
     private AccountDetailViewModel mViewModel;
     private ProgressDialog mProgressDialog;
@@ -114,6 +116,12 @@ public class AccountDetailFragment extends BaseFragment implements LockDialog.Lo
             }
         });
 
+        mViewModel.getSelectImageEvent().observe(this, (String url) -> {
+            Intent intent = new Intent(getActivity(), IconsActivity.class);
+            intent.putExtra(IconsActivity.URL_KEY, url);
+            startActivityForResult(intent, ICON_REQUEST_CODE);
+        });
+
         Account account = getArguments().getParcelable(AccountDetailActivity.ACCOUNT_EXTRA);
         mViewModel.start(account);
     }
@@ -149,6 +157,19 @@ public class AccountDetailFragment extends BaseFragment implements LockDialog.Lo
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case ICON_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK && mViewModel != null) {
+                    String url = data.getStringExtra(IconsActivity.URL_KEY);
+                    mViewModel.setAccountIcon(url);
+                }
+                break;
+        }
     }
 
     @Override
