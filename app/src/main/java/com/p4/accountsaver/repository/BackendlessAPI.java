@@ -16,6 +16,7 @@ import com.p4.accountsaver.model.Profile;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -23,8 +24,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -212,6 +216,34 @@ public class BackendlessAPI {
                 listener.onFailure(new ApiError(t));
             }
         });
+    }
+
+    public void uploadGameIcon(byte[] iconData, API.ApiListener<String> listener) {
+        Profile profile = ProfileManager.getInstance().getProfile();
+        if (profile != null) {
+            String name = "game-icon-" + (new Date().getTime()) + ".jpeg";
+            MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", name,
+                    RequestBody.create(MediaType.parse("image/*"), iconData));
+            String path = profile.getOwnerId() + "/" + name;
+
+            mApi.uploadGameIcon(path, filePart).enqueue(new Callback<API.FileBody>() {
+                @Override
+                public void onResponse(Call<API.FileBody> call, Response<API.FileBody> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().fileURL != null) {
+                        listener.onSuccess(response.body().fileURL);
+                    } else {
+                        listener.onFailure(new ApiError(response.errorBody()));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<API.FileBody> call, Throwable t) {
+                    listener.onFailure(new ApiError(t));
+                }
+            });
+        } else {
+            listener.onFailure(null);
+        }
     }
 
     public void deleteGameIcons(String url) {

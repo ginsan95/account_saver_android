@@ -50,6 +50,7 @@
     <!--Game Icon-->
     <string name="game_icon_title">Game Icons</string>
     <string name="done">Done</string>
+    <string name="uploading">Uploading</string>
 
     <!--Dialog-->
     <string name="dialog_ok">OK</string>

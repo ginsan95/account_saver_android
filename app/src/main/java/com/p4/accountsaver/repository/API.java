@@ -5,13 +5,16 @@ import com.p4.accountsaver.model.Profile;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -39,6 +42,10 @@ public interface API {
     @GET("files/game_icon/{id}?pageSize=100")
     Call<List<FileBody>> fetchGameIcons(@Path("id") String id);
 
+    @Multipart
+    @POST("files/game_icon/{name}")
+    Call<FileBody> uploadGameIcon(@Path(value = "name", encoded = true) String name, @Part MultipartBody.Part filePart);
+
     @DELETE("{url}")
     Call<ResponseBody> deleteGameIcon(@Path(value = "url", encoded = true) String url);
     // endregion
@@ -60,6 +67,7 @@ public interface API {
         public String publicUrl;
         public int size;
         public String url;
+        public String fileURL;
     }
     // endregion
 
