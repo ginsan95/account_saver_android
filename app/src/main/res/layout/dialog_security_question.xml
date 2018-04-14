@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="securityQuestion"
+            type="com.p4.accountsaver.model.SecurityQuestion"/>
+    </data>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -10,19 +18,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:text="@string/dialog_lock_message"/>
+            android:text="@string/dialog_security_question_message"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <android.support.design.widget.TextInputEditText
-                android:id="@+id/password_edit_text"
+                android:id="@+id/question_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:inputType="text"
-                android:hint="@string/password_hint"/>
+                android:hint="@string/question_hint"
+                android:text="@={securityQuestion.question}"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -31,12 +40,13 @@
             android:layout_height="wrap_content">
 
             <android.support.design.widget.TextInputEditText
-                android:id="@+id/confirm_password_edit_text"
+                android:id="@+id/answer_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:inputType="text"
-                android:hint="@string/confirm_password_hint"/>
+                android:hint="@string/answer_hint"
+                android:text="@={securityQuestion.answer}"/>
 
         </android.support.design.widget.TextInputLayout>
 

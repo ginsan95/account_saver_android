@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.p4.accountsaver.R;
 import com.p4.accountsaver.databinding.FragmentAccountDetailBinding;
 import com.p4.accountsaver.model.Account;
+import com.p4.accountsaver.model.SecurityQuestions;
 import com.p4.accountsaver.repository.ApiEvent;
 import com.p4.accountsaver.ui.account.dialog.LockDialog;
 import com.p4.accountsaver.ui.base.BaseFragment;
@@ -30,7 +31,9 @@ import com.p4.accountsaver.utils.DialogUtils;
  */
 
 public class AccountDetailFragment extends BaseFragment implements LockDialog.LockDialogListener {
-    private static final int ICON_REQUEST_CODE = 1;
+    private static final int ICON_REQUEST_CODE = 101;
+    private static final int SECURITY_QUESTIONS_REQUEST_CODE = 102;
+
     private FragmentAccountDetailBinding mBinding;
     private AccountDetailViewModel mViewModel;
     private ProgressDialog mProgressDialog;
@@ -122,6 +125,14 @@ public class AccountDetailFragment extends BaseFragment implements LockDialog.Lo
             startActivityForResult(intent, ICON_REQUEST_CODE);
         });
 
+        mViewModel.getViewQuestionsEvent().observe(this, (SecurityQuestions securityQuestions) -> {
+            Intent intent = new Intent(getActivity(), SecurityQuestionsActivity.class);
+            intent.putExtra(SecurityQuestionsActivity.SECURITY_QUESTIONS_KEY, securityQuestions);
+            intent.putExtra(SecurityQuestionsActivity.CAN_EDIT_KEY,
+                    mViewModel.getViewType().getValue() != AccountDetailViewModel.ViewType.VIEW);
+            startActivityForResult(intent, SECURITY_QUESTIONS_REQUEST_CODE);
+        });
+
         Account account = getArguments().getParcelable(AccountDetailActivity.ACCOUNT_EXTRA);
         mViewModel.start(account);
     }
@@ -167,6 +178,11 @@ public class AccountDetailFragment extends BaseFragment implements LockDialog.Lo
                 if (resultCode == Activity.RESULT_OK && mViewModel != null) {
                     String url = data.getStringExtra(IconsActivity.URL_KEY);
                     mViewModel.setAccountIcon(url);
+                }
+            case SECURITY_QUESTIONS_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK && mViewModel != null) {
+                    SecurityQuestions securityQuestions = data.getParcelableExtra(SecurityQuestionsActivity.SECURITY_QUESTIONS_KEY);
+                    mViewModel.setSecurityQuestions(securityQuestions);
                 }
                 break;
         }

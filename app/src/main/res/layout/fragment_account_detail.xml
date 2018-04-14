@@ -308,7 +308,8 @@
                     android:paddingTop="4dp"
                     android:paddingBottom="4dp"
                     android:background="?selectableItemBackground"
-                    android:text="0 Questions"
+                    android:text="@{@plurals/questions(viewmodel.account.securityQuestions.questionList.size(), viewmodel.account.securityQuestions.questionList.size())}"
+                    android:onClick="@{() -> viewmodel.viewSecurityQuestions()}"
                     app:layout_constraintTop_toTopOf="@id/arrow_text_view"
                     app:layout_constraintBottom_toBottomOf="@id/arrow_text_view"/>
 

@@ -4,17 +4,16 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.p4.accountsaver.R;
 import com.p4.accountsaver.model.Account;
+import com.p4.accountsaver.model.SecurityQuestions;
 import com.p4.accountsaver.repository.API;
 import com.p4.accountsaver.repository.ApiError;
 import com.p4.accountsaver.repository.ApiEvent;
@@ -44,6 +43,7 @@ public class AccountDetailViewModel extends AndroidViewModel {
     private final MutableLiveData<String> mChangeLockEvent = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mBackPressedEvent = new MutableLiveData<>();
     private final MutableLiveData<String> mSelectImageEvent = new MutableLiveData<>();
+    private final MutableLiveData<SecurityQuestions> mViewQuestionsEvent = new MutableLiveData<>();
 
     public AccountDetailViewModel(@NonNull Application application) {
         super(application);
@@ -89,7 +89,7 @@ public class AccountDetailViewModel extends AndroidViewModel {
     public void showLockDialog() {
         if (isEditMode.get()) {
             mChangeLockEvent.setValue(account.get().isLocked() ?
-                    mContext.getString(R.string.dialog_lock_unloack_title) : mContext.getString(R.string.dialog_lock_add_title));
+                    mContext.getString(R.string.dialog_lock_unlock_title) : mContext.getString(R.string.dialog_lock_add_title));
         }
     }
 
@@ -126,6 +126,17 @@ public class AccountDetailViewModel extends AndroidViewModel {
     public void setAccountIcon(String url) {
         account.get().setGameIconUrl(url);
         account.notifyChange();
+    }
+
+    public void viewSecurityQuestions() {
+        mViewQuestionsEvent.setValue(account.get().getSecurityQuestions());
+    }
+
+    public void setSecurityQuestions(SecurityQuestions securityQuestions) {
+        if (securityQuestions != null) {
+            account.get().setSecurityQuestions(securityQuestions);
+            account.notifyChange();
+        }
     }
 
     public void onBackPressed() {
@@ -213,6 +224,10 @@ public class AccountDetailViewModel extends AndroidViewModel {
 
     public LiveData<String> getSelectImageEvent() {
         return mSelectImageEvent;
+    }
+
+    public LiveData<SecurityQuestions> getViewQuestionsEvent() {
+        return mViewQuestionsEvent;
     }
     // endregion
 }

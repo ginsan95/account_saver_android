@@ -12,6 +12,7 @@ import com.google.gson.internal.bind.DateTypeAdapter;
 import com.p4.accountsaver.manager.ProfileManager;
 import com.p4.accountsaver.model.Account;
 import com.p4.accountsaver.model.Profile;
+import com.p4.accountsaver.model.SecurityQuestions;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +52,7 @@ public class BackendlessAPI {
     private BackendlessAPI() {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Date.class, new MyDateTypeAdapter())
+                .registerTypeAdapter(SecurityQuestions.class, new SecurityQuestionsAdapter())
                 .create();
         mRetrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)

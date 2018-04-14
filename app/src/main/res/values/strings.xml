@@ -36,13 +36,18 @@
     <string name="description">Description</string>
     <string name="edit_mode">Edit Mode</string>
     <string name="security_questions">Security Questions</string>
+    <plurals name="questions">
+        <item quantity="zero">%1$d Question</item>
+        <item quantity="one">%1$d Question</item>
+        <item quantity="other">%1$d Questions</item>
+    </plurals>
     <string name="game_name_empty_error">Game name cannot be empty</string>
     <string name="loading">Loading</string>
     <string name="edit_dismiss_message">Data is not saved. Continue to dismiss editing?</string>
 
     <!--Lock Dialog-->
     <string name="dialog_lock_add_title">Add Lock</string>
-    <string name="dialog_lock_unloack_title">Unlock</string>
+    <string name="dialog_lock_unlock_title">Unlock</string>
     <string name="dialog_lock_message">Enter lock password</string>
     <string name="password_diff_message">Password and confirm password are not the same</string>
     <string name="incorrect_lock_password">Wrong lock password</string>
@@ -51,6 +56,12 @@
     <string name="game_icon_title">Game Icons</string>
     <string name="done">Done</string>
     <string name="uploading">Uploading</string>
+
+    <!--Security Question-->
+    <string name="dialog_security_question_message">Enter security question and answer</string>
+    <string name="question_hint">Question</string>
+    <string name="answer_hint">Answer</string>
+    <string name="question_empty_error">Question cannot be empty</string>
 
     <!--Dialog-->
     <string name="dialog_ok">OK</string>

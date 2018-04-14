@@ -8,6 +8,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by averychoke on 3/3/18.
@@ -35,7 +37,8 @@ public class Account implements Parcelable {
     private String description;
     @SerializedName("lock_password")
     private String lockPassword;
-    private String securityQuestions;
+    @SerializedName("security_questions")
+    private SecurityQuestions securityQuestions;
 
     public Account() {
 
@@ -173,6 +176,14 @@ public class Account implements Parcelable {
     public void setLockPassword(String lockPassword) {
         this.lockPassword = lockPassword;
     }
+
+    public SecurityQuestions getSecurityQuestions() {
+        return securityQuestions;
+    }
+
+    public void setSecurityQuestions(SecurityQuestions securityQuestions) {
+        this.securityQuestions = securityQuestions;
+    }
     // endregion
 
     // region Parcelable
@@ -192,7 +203,7 @@ public class Account implements Parcelable {
         phoneNumber = in.readString();
         description = in.readString();
         lockPassword = in.readString();
-        securityQuestions = in.readString();
+        securityQuestions = in.readParcelable(SecurityQuestions.class.getClassLoader());
     }
 
     @Override
@@ -213,7 +224,7 @@ public class Account implements Parcelable {
         dest.writeString(phoneNumber);
         dest.writeString(description);
         dest.writeString(lockPassword);
-        dest.writeString(securityQuestions);
+        dest.writeParcelable(securityQuestions, flags);
     }
 
     @Override

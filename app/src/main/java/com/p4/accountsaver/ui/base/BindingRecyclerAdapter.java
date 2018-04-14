@@ -19,7 +19,9 @@ public abstract class BindingRecyclerAdapter<VH extends RecyclerView.ViewHolder,
 
     public void setItems(List<T> items) {
         mItems.clear();
-        mItems.addAll(items);
+        if (items != null) {
+            mItems.addAll(items);
+        }
         notifyDataSetChanged();
     }
 
