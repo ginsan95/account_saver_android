@@ -66,4 +66,9 @@
     <!--Dialog-->
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
+
+    <!--Profile-->
+    <string name="profile_welcome">Welcome</string>
+    <string name="profile_logout">Logout</string>
+    <string name="logging_out">Logging Out</string>
 </resources>

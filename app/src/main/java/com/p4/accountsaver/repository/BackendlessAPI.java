@@ -78,6 +78,7 @@ public class BackendlessAPI {
         mApi = mRetrofit.create(API.class);
     }
 
+    // region Profile
     public void login(String username, String password, API.ApiListener<Profile> listener) {
         mApi.login(new API.LoginBody(username, password)).enqueue(new Callback<Profile>() {
             @Override
@@ -97,6 +98,25 @@ public class BackendlessAPI {
             }
         });
     }
+
+    public void logout(API.ApiListener<Boolean> listener) {
+        mApi.logout().enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    listener.onSuccess(true);
+                } else {
+                    listener.onFailure(new ApiError(response.errorBody()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                listener.onFailure(new ApiError(t));
+            }
+        });
+    }
+    // endregion
 
     // region Account
     public void fetchAccounts(int offset, String searchTerm, API.ApiListener<List<Account>> listener) {

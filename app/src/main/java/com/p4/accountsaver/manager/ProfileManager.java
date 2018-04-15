@@ -38,6 +38,25 @@ public class ProfileManager {
         });
     }
 
+    public void logout(API.ApiListener<Boolean> listener) {
+        BackendlessAPI.getInstance().logout(new API.ApiListener<Boolean>() {
+            @Override
+            public void onSuccess(Boolean success) {
+                if (success) {
+                    mProfile = null;
+                    listener.onSuccess(true);
+                } else {
+                    listener.onFailure(null);
+                }
+            }
+
+            @Override
+            public void onFailure(ApiError error) {
+                listener.onFailure(error);
+            }
+        });
+    }
+
     // region get set
     public Profile getProfile() {
         return mProfile;

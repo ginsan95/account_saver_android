@@ -39,6 +39,7 @@ public class LoginActivity extends BaseActivity {
                     getProgressDialog().dismiss();
                     if (event.isSuccess()) {
                         startActivity(new Intent(this, MainActivity.class));
+                        finish();
                     } else if (event.getError() != null) {
                         DialogUtils.showErrorDialog(this, event.getError().getMessage());
                     }

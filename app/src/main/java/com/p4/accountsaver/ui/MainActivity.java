@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import com.p4.accountsaver.R;
 import com.p4.accountsaver.databinding.ActivityMainBinding;
 import com.p4.accountsaver.ui.account.AccountFragment;
+import com.p4.accountsaver.ui.profile.ProfileFragment;
 
 import java.util.List;
 
@@ -48,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             .commit();
                     break;
                 case R.id.nav_profile:
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(mBinding.containerLayout.getId(), new ProfileFragment())
+                            .commit();
                     break;
             }
         }
@@ -64,5 +69,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }

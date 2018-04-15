@@ -27,6 +27,9 @@ public interface API {
     @POST("users/login")
     Call<Profile> login(@Body LoginBody loginBody);
 
+    @GET("users/logout")
+    Call<ResponseBody> logout();
+
     @GET("data/Account?sortBy=game_name")
     Call<List<Account>> fetchAccounts(@Query("where") String where, @Query("offset") int offset, @Query("pageSize") int pageSize);
 
