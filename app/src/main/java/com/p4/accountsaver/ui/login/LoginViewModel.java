@@ -31,6 +31,7 @@ public class LoginViewModel extends AndroidViewModel {
     public final ObservableField<String> passwordError = new ObservableField<>();
 
     private final MutableLiveData<ApiEvent> mLoginEvent = new MutableLiveData<>();
+    private final MutableLiveData<Object> mSignUpEvent = new MutableLiveData<>();
 
     public LoginViewModel(Application context) {
         super(context);
@@ -60,7 +61,15 @@ public class LoginViewModel extends AndroidViewModel {
         }
     }
 
+    public void signUp() {
+        mSignUpEvent.setValue(new Object());
+    }
+
     public LiveData<ApiEvent> getLoginEvent() {
         return mLoginEvent;
+    }
+
+    public LiveData<Object> getSignUpEvent() {
+        return mSignUpEvent;
     }
 }

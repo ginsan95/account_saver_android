@@ -11,11 +11,12 @@ import android.view.MenuItem;
 import com.p4.accountsaver.R;
 import com.p4.accountsaver.databinding.ActivityMainBinding;
 import com.p4.accountsaver.ui.account.AccountFragment;
+import com.p4.accountsaver.ui.base.BaseActivity;
 import com.p4.accountsaver.ui.profile.ProfileFragment;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     private ActivityMainBinding mBinding;
 
     @Override

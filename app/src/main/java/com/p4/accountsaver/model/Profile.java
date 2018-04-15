@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Profile {
     private String name;
-    private String ownerId;
+    private String objectId;
     @SerializedName("user-token")
     private String userToken;
 
@@ -25,12 +25,12 @@ public class Profile {
         this.name = name;
     }
 
-    public String getOwnerId() {
-        return ownerId;
+    public String getObjectId() {
+        return objectId;
     }
 
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
+    public void setObjectId(String ownerId) {
+        this.objectId = ownerId;
     }
 
     public String getUserToken() {

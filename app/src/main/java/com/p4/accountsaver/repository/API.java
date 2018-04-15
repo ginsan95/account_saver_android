@@ -27,6 +27,9 @@ public interface API {
     @POST("users/login")
     Call<Profile> login(@Body LoginBody loginBody);
 
+    @POST("users/register")
+    Call<Profile> signUp(@Body SignUpBody signUpBody);
+
     @GET("users/logout")
     Call<ResponseBody> logout();
 
@@ -61,6 +64,18 @@ public interface API {
 
         public LoginBody(String login, String password) {
             this.login = login;
+            this.password = password;
+        }
+    }
+
+    class SignUpBody {
+        private String username;
+        private String name;
+        private String password;
+
+        public SignUpBody(String username, String name, String password) {
+            this.username = username;
+            this.name = name;
             this.password = password;
         }
     }

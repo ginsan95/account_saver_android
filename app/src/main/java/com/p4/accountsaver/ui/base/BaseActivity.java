@@ -1,5 +1,6 @@
 package com.p4.accountsaver.ui.base;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -17,5 +18,9 @@ public class BaseActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void changeFragment(Fragment fragment) {
+
     }
 }

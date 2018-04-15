@@ -15,8 +15,15 @@
     <string name="password_empty_error">Password cannot be empty</string>
     <string name="logging_in">Logging In</string>
 
-    <!--Register-->
+    <!--Sign Up-->
+    <string name="name_hint">Name</string>
     <string name="confirm_password_hint">Confirm password</string>
+    <string name="sign_up_button">Sign Up</string>
+    <string name="name_empty_error">Username cannot be empty</string>
+    <string name="confirm_password_empty_error">Password cannot be empty</string>
+    <string name="different_password_error">Password are not the same</string>
+    <string name="signing_up">Signing Up</string>
+    <string name="sign_up_success_message">Signed Up Successfully</string>
 
     <!--Account-->
     <string name="search">Search</string>

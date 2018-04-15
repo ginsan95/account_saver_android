@@ -99,6 +99,24 @@ public class BackendlessAPI {
         });
     }
 
+    public void signUp(String username, String name, String password, API.ApiListener<Boolean> listener) {
+        mApi.signUp(new API.SignUpBody(username, name, password)).enqueue(new Callback<Profile>() {
+            @Override
+            public void onResponse(Call<Profile> call, Response<Profile> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getObjectId() != null) {
+                    listener.onSuccess(true);
+                } else {
+                    listener.onFailure(new ApiError(response.errorBody()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Profile> call, Throwable t) {
+                listener.onFailure(new ApiError(t));
+            }
+        });
+    }
+
     public void logout(API.ApiListener<Boolean> listener) {
         mApi.logout().enqueue(new Callback<ResponseBody>() {
             @Override
@@ -123,7 +141,7 @@ public class BackendlessAPI {
         StringBuilder sb = new StringBuilder();
         if (ProfileManager.getInstance().getProfile() != null) {
             sb.append("ownerId='");
-            sb.append(ProfileManager.getInstance().getProfile().getOwnerId());
+            sb.append(ProfileManager.getInstance().getProfile().getObjectId());
             sb.append("'");
         }
         if (!TextUtils.isEmpty(searchTerm)) {
@@ -215,7 +233,7 @@ public class BackendlessAPI {
 
     // region Game Icons
     public void fetchGameIcons(API.ApiListener<List<String>> listener) {
-        mApi.fetchGameIcons(ProfileManager.getInstance().getProfile().getOwnerId()).enqueue(new Callback<List<API.FileBody>>() {
+        mApi.fetchGameIcons(ProfileManager.getInstance().getProfile().getObjectId()).enqueue(new Callback<List<API.FileBody>>() {
             @Override
             public void onResponse(Call<List<API.FileBody>> call, Response<List<API.FileBody>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -246,7 +264,7 @@ public class BackendlessAPI {
             String name = "game-icon-" + (new Date().getTime()) + ".jpeg";
             MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", name,
                     RequestBody.create(MediaType.parse("image/*"), iconData));
-            String path = profile.getOwnerId() + "/" + name;
+            String path = profile.getObjectId() + "/" + name;
 
             mApi.uploadGameIcon(path, filePart).enqueue(new Callback<API.FileBody>() {
                 @Override
